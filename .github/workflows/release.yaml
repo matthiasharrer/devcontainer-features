@@ -1,11 +1,14 @@
 name: "Release dev container features & Generate Documentation"
 
 on:
+  release:
+    types:
+      - published
   workflow_dispatch:
 
 jobs:
   deploy:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'release' || github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
