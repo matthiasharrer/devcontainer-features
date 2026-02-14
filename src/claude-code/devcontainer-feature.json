@@ -1,0 +1,39 @@
+{
+  "id": "claude-code",
+  "version": "1.0.0",
+  "name": "Claude Code with Sandbox",
+  "description": "Installs Claude Code CLI and sandbox dependencies (bubblewrap, socat, ripgrep). Runs privileged and mounts Claude credential/config files from the host.",
+  "documentationURL": "https://code.claude.com/docs/en/sandboxing",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "latest",
+      "description": "Version of Claude Code to install ('latest', 'stable', or a specific version number)"
+    }
+  },
+  "privileged": true,
+  "mounts": [
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.claude",
+      "target": "/home/vscode/.claude"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.claude.json",
+      "target": "/home/vscode/.claude.json"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.config/claude-code",
+      "target": "/home/vscode/.config/claude-code"
+    }
+  ],
+  "containerEnv": {
+    "CLAUDE_CODE_DISABLE_NONINTERACTIVE": "1"
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils",
+    "ghcr.io/devcontainers/features/node"
+  ]
+}
