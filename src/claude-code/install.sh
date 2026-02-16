@@ -71,10 +71,20 @@ prepare_config_dirs() {
     mkdir -p "${user_home}/.claude"
     mkdir -p "${user_home}/.config/claude-code"
     touch "${user_home}/.claude.json"
+    touch "${user_home}/.gitignore"
+
+    # Configure git to use ~/.gitignore as the global excludes file.
+    # Git expands the tilde, so this works regardless of the actual home path.
+    git config -f "${user_home}/.gitconfig" core.excludesFile "~/.gitignore"
 
     # Fix ownership if the vscode user exists
     if id vscode &>/dev/null; then
-        chown -R vscode:vscode "${user_home}/.claude" "${user_home}/.claude.json" "${user_home}/.config/claude-code"
+        chown -R vscode:vscode \
+            "${user_home}/.claude" \
+            "${user_home}/.claude.json" \
+            "${user_home}/.config/claude-code" \
+            "${user_home}/.gitignore" \
+            "${user_home}/.gitconfig"
     fi
 }
 
