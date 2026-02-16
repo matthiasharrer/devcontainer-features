@@ -61,6 +61,49 @@ install_claude_code() {
     fi
 }
 
+# Install seccomp filter binaries from the @anthropic-ai/sandbox-runtime npm
+# package. This downloads only the tarball and extracts the pre-built vendor
+# binaries, avoiding a full `npm install -g`. The files are placed at a path
+# that Claude Code's sandbox-runtime probes automatically.
+install_seccomp_filter() {
+    local pkg="@anthropic-ai/sandbox-runtime"
+    local dest="/usr/local/lib/node_modules/@anthropic-ai/sandbox-runtime"
+    local tmpdir
+
+    tmpdir="$(mktemp -d)"
+    trap "rm -rf '${tmpdir}'" RETURN
+
+    echo "Downloading ${pkg} tarball for seccomp binaries..."
+    # npm pack writes a tarball without installing anything
+    if ! npm pack "${pkg}" --pack-destination "${tmpdir}" >/dev/null 2>&1; then
+        echo "WARNING: Failed to download ${pkg}. Seccomp filter will not be installed."
+        return 0
+    fi
+
+    local tarball
+    tarball="$(ls "${tmpdir}"/anthropic-ai-sandbox-runtime-*.tgz 2>/dev/null | head -1)"
+    if [ -z "${tarball}" ]; then
+        echo "WARNING: Tarball not found after npm pack. Seccomp filter will not be installed."
+        return 0
+    fi
+
+    # Extract only the vendor/seccomp directory
+    mkdir -p "${dest}/vendor/seccomp"
+    tar xzf "${tarball}" -C "${dest}/vendor/seccomp" --strip-components=2 \
+        "package/vendor/seccomp" 2>/dev/null || true
+
+    # Ensure apply-seccomp binaries are executable
+    chmod +x "${dest}/vendor/seccomp/x64/apply-seccomp" 2>/dev/null || true
+    chmod +x "${dest}/vendor/seccomp/arm64/apply-seccomp" 2>/dev/null || true
+
+    if [ -f "${dest}/vendor/seccomp/x64/apply-seccomp" ] || \
+       [ -f "${dest}/vendor/seccomp/arm64/apply-seccomp" ]; then
+        echo "Seccomp filter binaries installed to ${dest}/vendor/seccomp/"
+    else
+        echo "WARNING: Seccomp binaries were not found in the package."
+    fi
+}
+
 # Ensure mounted config paths exist with correct ownership inside the container.
 # The bind mounts in devcontainer-feature.json will overlay these, but we create
 # them so that the container can start even if the host paths don't exist yet.
@@ -80,6 +123,7 @@ prepare_config_dirs() {
 
 install_sandbox_deps
 install_claude_code
+install_seccomp_filter
 prepare_config_dirs
 
 echo "Claude Code and sandbox dependencies installed successfully."
