@@ -27,14 +27,8 @@
       "type": "bind",
       "source": "${localEnv:HOME}/.config/claude-code",
       "target": "/home/vscode/.config/claude-code"
-    },
-    {
-      "type": "bind",
-      "source": "${localEnv:HOME}/.gitignore",
-      "target": "/tmp/.host-gitignore"
     }
   ],
-  "postStartCommand": "if [ -f /tmp/.host-gitignore ]; then cp /tmp/.host-gitignore ~/.gitignore; fi",
   "containerEnv": {
     "CLAUDE_CODE_DISABLE_NONINTERACTIVE": "1"
   },

@@ -1,0 +1,17 @@
+{
+  "id": "copy-gitignore",
+  "version": "1.0.0",
+  "name": "Copy Global Gitignore",
+  "description": "Copies the host's ~/.gitignore into the container and configures it as the git global excludes file.",
+  "mounts": [
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.gitignore",
+      "target": "/tmp/.host-gitignore"
+    }
+  ],
+  "postStartCommand": "if [ -f /tmp/.host-gitignore ]; then cp /tmp/.host-gitignore ~/.gitignore; fi",
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
+}
