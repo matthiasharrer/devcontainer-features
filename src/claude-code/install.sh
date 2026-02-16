@@ -62,28 +62,32 @@ install_claude_code() {
 }
 
 # Install seccomp filter binaries from the @anthropic-ai/sandbox-runtime npm
-# package. This downloads only the tarball and extracts the pre-built vendor
-# binaries, avoiding a full `npm install -g`. The files are placed at a path
-# that Claude Code's sandbox-runtime probes automatically.
+# package. Downloads the tarball directly from the npm registry using curl
+# (no npm required) and extracts only the pre-built vendor binaries. The files
+# are placed at a path that Claude Code's sandbox-runtime probes automatically.
 install_seccomp_filter() {
-    local pkg="@anthropic-ai/sandbox-runtime"
     local dest="/usr/local/lib/node_modules/@anthropic-ai/sandbox-runtime"
+    local registry="https://registry.npmjs.org/@anthropic-ai/sandbox-runtime"
     local tmpdir
 
     tmpdir="$(mktemp -d)"
     trap "rm -rf '${tmpdir}'" RETURN
 
-    echo "Downloading ${pkg} tarball for seccomp binaries..."
-    # npm pack writes a tarball without installing anything
-    if ! npm pack "${pkg}" --pack-destination "${tmpdir}" >/dev/null 2>&1; then
-        echo "WARNING: Failed to download ${pkg}. Seccomp filter will not be installed."
+    echo "Downloading sandbox-runtime seccomp binaries..."
+
+    # Resolve the latest version from the npm registry (no jq needed)
+    local version
+    version="$(curl -fsSL "${registry}" | grep -o '"latest":"[^"]*"' | head -1 | cut -d'"' -f4)"
+    if [ -z "${version}" ]; then
+        echo "WARNING: Failed to resolve sandbox-runtime version. Seccomp filter will not be installed."
         return 0
     fi
+    echo "Resolved @anthropic-ai/sandbox-runtime version: ${version}"
 
-    local tarball
-    tarball="$(ls "${tmpdir}"/anthropic-ai-sandbox-runtime-*.tgz 2>/dev/null | head -1)"
-    if [ -z "${tarball}" ]; then
-        echo "WARNING: Tarball not found after npm pack. Seccomp filter will not be installed."
+    # Download the tarball directly from the npm registry
+    local tarball="${tmpdir}/sandbox-runtime-${version}.tgz"
+    if ! curl -fsSL "${registry}/-/sandbox-runtime-${version}.tgz" -o "${tarball}"; then
+        echo "WARNING: Failed to download sandbox-runtime tarball. Seccomp filter will not be installed."
         return 0
     fi
 
