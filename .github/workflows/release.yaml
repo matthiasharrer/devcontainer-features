@@ -1,14 +1,14 @@
 name: "Release dev container features"
 
 on:
-  release:
-    types:
-      - published
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   deploy:
-    if: ${{ github.event_name == 'release' || github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
