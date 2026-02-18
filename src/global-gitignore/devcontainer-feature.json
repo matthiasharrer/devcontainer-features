@@ -7,8 +7,7 @@
     {
       "type": "bind",
       "source": "${localEnv:HOME}/.gitignore",
-      "target": "/home/vscode/.gitignore",
-      "readonly": true
+      "target": "/home/vscode/.gitignore"
     }
   ],
   "installsAfter": [
