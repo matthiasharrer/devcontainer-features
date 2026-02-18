@@ -1,6 +1,6 @@
 {
   "id": "mine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Mine",
   "description": "Wrapper feature that installs Node.js, Claude Code with sandbox, and global gitignore configuration.",
   "dependsOn": {
