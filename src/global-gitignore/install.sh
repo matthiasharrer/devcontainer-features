@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Copy Global Gitignore
+# Global Gitignore
 # This script creates a placeholder ~/.gitignore and configures git
-# to use it as the global excludes file. The actual host file is copied
-# into place by the postStartCommand defined in devcontainer-feature.json.
+# to use it as the global excludes file. The actual host file is
+# bind-mounted over this placeholder at container start.
 
 echo "Configuring global gitignore..."
 
