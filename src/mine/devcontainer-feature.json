@@ -5,7 +5,7 @@
   "description": "Wrapper feature that installs Node.js, Claude Code with sandbox, and global gitignore configuration.",
   "dependsOn": {
     "ghcr.io/devcontainers/features/node:1": {},
-    "./claude-code": {},
-    "./global-gitignore": {}
+    "ghcr.io/matthiasharrer/devcontainer-features/claude-code:1": {},
+    "ghcr.io/matthiasharrer/devcontainer-features/global-gitignore:1": {}
   }
 }
