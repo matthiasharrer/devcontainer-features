@@ -1,0 +1,11 @@
+{
+  "id": "mine",
+  "version": "1.0.0",
+  "name": "Mine",
+  "description": "Wrapper feature that installs Node.js, Claude Code with sandbox, and global gitignore configuration.",
+  "dependsOn": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "./claude-code": {},
+    "./global-gitignore": {}
+  }
+}
