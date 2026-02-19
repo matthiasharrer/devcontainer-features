@@ -1,11 +1,12 @@
 {
   "id": "mine",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "name": "Mine",
-  "description": "Wrapper feature that installs Node.js, Claude Code with sandbox, and global gitignore configuration.",
+  "description": "Wrapper feature that installs Node.js, Claude Code with sandbox, global gitignore configuration, and Atuin shell history.",
   "dependsOn": {
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/matthiasharrer/devcontainer-features/claude-code:1": {},
-    "ghcr.io/matthiasharrer/devcontainer-features/global-gitignore:1": {}
+    "ghcr.io/matthiasharrer/devcontainer-features/global-gitignore:1": {},
+    "ghcr.io/matthiasharrer/devcontainer-features/atuin:1": {}
   }
 }
