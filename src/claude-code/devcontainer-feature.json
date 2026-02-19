@@ -32,6 +32,9 @@
   "containerEnv": {
     "CLAUDE_CODE_DISABLE_NONINTERACTIVE": "1"
   },
+  "dependsOn": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
   "installsAfter": [
     "ghcr.io/devcontainers/features/common-utils",
     "ghcr.io/devcontainers/features/node"
