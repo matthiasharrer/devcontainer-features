@@ -43,7 +43,7 @@ prepare_mount_dirs() {
 
     # Fix ownership if the vscode user exists
     if id vscode &>/dev/null; then
-        chown -R vscode:vscode "${user_home}/.config/atuin" "${user_home}/.local/share/atuin"
+        chown -R vscode:vscode "${user_home}/.config/atuin" "${user_home}/.local"
     fi
 }
 
