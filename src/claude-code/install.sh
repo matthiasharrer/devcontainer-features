@@ -79,7 +79,12 @@ prepare_config_dirs() {
     mkdir -p "${user_home}/.claude"
     mkdir -p "${user_home}/.config/claude-code"
     mkdir -p "${user_home}/.local/bin"
-    touch "${user_home}/.claude.json"
+    # Write a valid empty JSON object if the file doesn't exist yet.
+    # Using `touch` would produce an empty file which Claude Code's JSON
+    # parser rejects with "Unexpected EOF" during installation.
+    if [ ! -f "${user_home}/.claude.json" ]; then
+        echo '{}' > "${user_home}/.claude.json"
+    fi
 
     # Fix ownership if the vscode user exists.
     # Other features (e.g. atuin) may create ~/.local owned by root during the

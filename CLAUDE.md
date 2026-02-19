@@ -28,6 +28,8 @@ devcontainer features test --features claude-code --base-image mcr.microsoft.com
 
 Features are published automatically when a GitHub Release is created. The workflow can also be triggered manually via `workflow_dispatch`. Only the `main` branch is eligible for publishing.
 
+> **Important:** Consumers who reference the feature by a version tag (e.g. `:1`) will not pick up changes until the version in `src/claude-code/devcontainer-feature.json` is bumped and a new release is published. Always bump the version when making functional changes so that existing devcontainers can rebuild and get the update.
+
 ## Key Design Decisions
 
 - **Privileged mode**: The container runs privileged (`"privileged": true`) because bubblewrap requires it for sandboxing.
