@@ -1,0 +1,9 @@
+{
+  "id": "zsh-config",
+  "version": "1.0.0",
+  "name": "Zsh Config (Oh My Zsh + Plugins)",
+  "description": "Installs Oh My Zsh with zsh-autosuggestions plugin and Spaceship prompt theme.",
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
+}
