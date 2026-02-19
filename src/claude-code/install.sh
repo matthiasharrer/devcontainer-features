@@ -70,11 +70,15 @@ prepare_config_dirs() {
 
     mkdir -p "${user_home}/.claude"
     mkdir -p "${user_home}/.config/claude-code"
+    mkdir -p "${user_home}/.local/bin"
     touch "${user_home}/.claude.json"
 
-    # Fix ownership if the vscode user exists
+    # Fix ownership if the vscode user exists.
+    # Other features (e.g. atuin) may create ~/.local owned by root during the
+    # build phase. Claude Code needs ~/.local/bin to be writable by the
+    # container user, so we fix ownership here.
     if id vscode &>/dev/null; then
-        chown -R vscode:vscode "${user_home}/.claude" "${user_home}/.claude.json" "${user_home}/.config/claude-code"
+        chown -R vscode:vscode "${user_home}/.claude" "${user_home}/.claude.json" "${user_home}/.config/claude-code" "${user_home}/.local"
     fi
 }
 
