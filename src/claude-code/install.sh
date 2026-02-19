@@ -50,15 +50,23 @@ install_sandbox_deps() {
     fi
 }
 
-# Install Claude Code via the native installer
+# Install Claude Code via the native installer.
+# Run inside a subshell with HOME pointing at the vscode user's home so the
+# installer places the binary where the container user can find it.
 install_claude_code() {
-    if [ "${VERSION}" = "latest" ]; then
-        curl -fsSL https://claude.ai/install.sh | bash -s latest
-    elif [ "${VERSION}" = "stable" ]; then
-        curl -fsSL https://claude.ai/install.sh | bash
-    else
-        curl -fsSL https://claude.ai/install.sh | bash -s "${VERSION}"
-    fi
+    local user_home
+    user_home="$(getent passwd vscode 2>/dev/null | cut -d: -f6 || echo "/home/vscode")"
+
+    (
+        export HOME="${user_home}"
+        if [ "${VERSION}" = "latest" ]; then
+            curl -fsSL https://claude.ai/install.sh | bash -s latest
+        elif [ "${VERSION}" = "stable" ]; then
+            curl -fsSL https://claude.ai/install.sh | bash
+        else
+            curl -fsSL https://claude.ai/install.sh | bash -s "${VERSION}"
+        fi
+    )
 }
 
 # Ensure mounted config paths exist with correct ownership inside the container.
@@ -83,7 +91,7 @@ prepare_config_dirs() {
 }
 
 install_sandbox_deps
-install_claude_code
 prepare_config_dirs
+install_claude_code
 
 echo "Claude Code and sandbox dependencies installed successfully."
