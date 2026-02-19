@@ -1,0 +1,31 @@
+{
+  "id": "atuin",
+  "version": "1.0.0",
+  "name": "Atuin Shell History",
+  "description": "Installs Atuin shell history tool and mounts host config and data directories. Enables shell integration for bash and zsh with up-arrow disabled. Sync is disabled (host handles syncing).",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "latest",
+      "description": "Version of Atuin to install ('latest' or a specific version number like '18.4.0')"
+    }
+  },
+  "mounts": [
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.config/atuin",
+      "target": "/home/vscode/.config/atuin"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:HOME}/.local/share/atuin",
+      "target": "/home/vscode/.local/share/atuin"
+    }
+  ],
+  "containerEnv": {
+    "ATUIN_AUTO_SYNC": "false"
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
+}
