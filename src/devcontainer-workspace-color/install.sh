@@ -171,8 +171,8 @@ if [ "$JQ_FILTER" = "." ]; then
     exit 0
 fi
 
-# ---- Merge into .vscode/settings.json ----
-SETTINGS_DIR="${WORKSPACE_DIR}/.vscode"
+# ---- Merge into VS Code machine settings (container-local, not in workspace) ----
+SETTINGS_DIR="${HOME}/.vscode-server/data/Machine"
 SETTINGS_FILE="${SETTINGS_DIR}/settings.json"
 
 # Skip if the first target's key is already set (respect user customization)
@@ -199,7 +199,6 @@ if [ -f "$SETTINGS_FILE" ]; then
     if jq "$JQ_FILTER" "$SETTINGS_FILE" > "$TEMP" 2>/dev/null; then
         mv "$TEMP" "$SETTINGS_FILE"
     else
-        # jq failed (e.g. JSONC with comments) — skip rather than corrupt
         rm -f "$TEMP"
         echo "devcontainer-workspace-color: could not parse existing settings.json, skipping" >&2
         exit 0
