@@ -1,0 +1,32 @@
+{
+  "id": "devcontainer-workspace-color",
+  "version": "1.0.0",
+  "name": "Workspace Color",
+  "description": "Automatically colors VS Code's title bar with a deterministic color derived from the host workspace path, so each project clone is visually distinct.",
+  "options": {
+    "saturation": {
+      "type": "string",
+      "default": "65",
+      "description": "Color saturation (0-100)"
+    },
+    "lightness": {
+      "type": "string",
+      "default": "30",
+      "description": "Color lightness (0-100, clamped to 45 max for text contrast)"
+    },
+    "targets": {
+      "type": "string",
+      "default": "titleBar",
+      "description": "Comma-separated UI targets: titleBar, statusBar, activityBar"
+    },
+    "seed": {
+      "type": "string",
+      "default": "",
+      "description": "Extra string mixed into hash to change the color for a given workspace"
+    }
+  },
+  "postStartCommand": "/usr/local/bin/devcontainer-workspace-color",
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
+}
