@@ -95,8 +95,15 @@ prepare_config_dirs() {
     fi
 }
 
+# Install the Claude Code sandbox runtime via npm.
+# npm is guaranteed to be available via the hard dependsOn on the node feature.
+install_sandbox_runtime() {
+    npm install -g @anthropic-ai/sandbox-runtime
+}
+
 install_sandbox_deps
 prepare_config_dirs
 install_claude_code
+install_sandbox_runtime
 
 echo "Claude Code and sandbox dependencies installed successfully."
