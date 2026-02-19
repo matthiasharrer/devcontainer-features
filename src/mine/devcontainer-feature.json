@@ -1,6 +1,6 @@
 {
   "id": "mine",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Mine",
   "description": "Wrapper feature that installs Node.js, Claude Code with sandbox, global gitignore configuration, Atuin shell history, and Zsh config (Oh My Zsh with plugins).",
   "dependsOn": {
