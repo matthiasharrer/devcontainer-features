@@ -36,7 +36,8 @@
   ],
   "containerEnv": {
     "CLAUDE_CODE_DISABLE_NONINTERACTIVE": "1",
-    "PULSE_SERVER": "unix:/run/user/1000/pulse/native"
+    "PULSE_SERVER": "unix:/run/user/1000/pulse/native",
+    "AUDIODRIVER": "pulseaudio"
   },
   "dependsOn": {
     "ghcr.io/devcontainers/features/node:1": {}
