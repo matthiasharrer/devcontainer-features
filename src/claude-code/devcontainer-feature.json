@@ -1,8 +1,8 @@
 {
   "id": "claude-code",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "name": "Claude Code with Sandbox",
-  "description": "Installs Claude Code CLI and sandbox dependencies (bubblewrap, socat, ripgrep). Runs privileged and mounts Claude credential/config files from the host.",
+  "description": "Installs Claude Code CLI, sandbox dependencies (bubblewrap, socat, ripgrep), and voice-mode audio support (sox, PulseAudio/PipeWire). Runs privileged and mounts Claude credential/config files and the host PulseAudio socket.",
   "documentationURL": "https://code.claude.com/docs/en/sandboxing",
   "options": {
     "version": {
@@ -27,10 +27,16 @@
       "type": "bind",
       "source": "${localEnv:HOME}/.config/claude-code",
       "target": "/home/vscode/.config/claude-code"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:XDG_RUNTIME_DIR:/run/user/1000}/pulse",
+      "target": "/run/user/1000/pulse"
     }
   ],
   "containerEnv": {
-    "CLAUDE_CODE_DISABLE_NONINTERACTIVE": "1"
+    "CLAUDE_CODE_DISABLE_NONINTERACTIVE": "1",
+    "PULSE_SERVER": "unix:/run/user/1000/pulse/native"
   },
   "dependsOn": {
     "ghcr.io/devcontainers/features/node:1": {}

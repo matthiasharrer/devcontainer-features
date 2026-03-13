@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Claude Code with Sandbox Dependencies
-# This script installs Claude Code CLI and the system packages required
-# for its sandbox feature (bubblewrap, socat, ripgrep).
+# Claude Code with Sandbox Dependencies and Voice Mode Support
+# This script installs Claude Code CLI, the system packages required
+# for its sandbox feature (bubblewrap, socat, ripgrep), and audio
+# packages for voice mode (sox, PulseAudio/ALSA).
 
 VERSION="${VERSION:-latest}"
 
-echo "Installing Claude Code (version: ${VERSION}) and sandbox dependencies..."
+echo "Installing Claude Code (version: ${VERSION}) with sandbox and voice-mode dependencies..."
 
 # Detect the package manager and install sandbox dependencies
 install_sandbox_deps() {
@@ -18,7 +19,11 @@ install_sandbox_deps() {
             socat \
             ripgrep \
             curl \
-            ca-certificates
+            ca-certificates \
+            sox \
+            libsox-fmt-pulse \
+            alsa-utils \
+            libpulse0
         apt-get clean
         rm -rf /var/lib/apt/lists/*
     elif command -v dnf &>/dev/null; then
@@ -27,7 +32,10 @@ install_sandbox_deps() {
             socat \
             ripgrep \
             curl \
-            ca-certificates
+            ca-certificates \
+            sox \
+            alsa-utils \
+            pulseaudio-libs
         dnf clean all
     elif command -v yum &>/dev/null; then
         yum install -y \
@@ -35,7 +43,10 @@ install_sandbox_deps() {
             socat \
             ripgrep \
             curl \
-            ca-certificates
+            ca-certificates \
+            sox \
+            alsa-utils \
+            pulseaudio-libs
         yum clean all
     elif command -v apk &>/dev/null; then
         apk add --no-cache \
@@ -43,7 +54,10 @@ install_sandbox_deps() {
             socat \
             ripgrep \
             curl \
-            ca-certificates
+            ca-certificates \
+            sox \
+            alsa-utils \
+            pulseaudio-libs
     else
         echo "ERROR: Unsupported package manager. Install bubblewrap, socat, and ripgrep manually."
         exit 1
@@ -106,4 +120,4 @@ prepare_config_dirs
 install_claude_code
 install_sandbox_runtime
 
-echo "Claude Code and sandbox dependencies installed successfully."
+echo "Claude Code with sandbox and voice-mode dependencies installed successfully."
