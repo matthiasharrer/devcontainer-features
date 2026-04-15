@@ -100,13 +100,6 @@ prepare_config_dirs() {
         echo '{}' > "${user_home}/.claude.json"
     fi
 
-    # Fix ownership if the vscode user exists.
-    # Other features (e.g. atuin) may create ~/.local owned by root during the
-    # build phase. Claude Code needs ~/.local/bin to be writable by the
-    # container user, so we fix ownership here.
-    if id vscode &>/dev/null; then
-        chown -R vscode:vscode "${user_home}/.claude" "${user_home}/.claude.json" "${user_home}/.config/claude-code" "${user_home}/.local"
-    fi
 }
 
 # Install the Claude Code sandbox runtime via npm.
@@ -119,5 +112,29 @@ install_sandbox_deps
 prepare_config_dirs
 install_claude_code
 install_sandbox_runtime
+
+# Fix ownership of ~/.local and ~/.cache after all installers have run.
+# install_claude_code and install_sandbox_runtime execute as root with HOME set
+# to the vscode home, so they may create these directories (or subdirs) owned
+# by root. ~/.claude, ~/.claude.json, and ~/.config/claude-code are intentionally
+# excluded: they are bind-mounted from the host at runtime and would be overlaid
+# anyway, so chowning them here is both pointless and potentially misleading.
+fix_ownership() {
+    if ! id vscode &>/dev/null; then
+        return
+    fi
+    local user_home
+    user_home="$(getent passwd vscode 2>/dev/null | cut -d: -f6 || echo "/home/vscode")"
+
+    for dir in \
+        "${user_home}/.local" \
+        "${user_home}/.cache"; do
+        if [ -e "${dir}" ]; then
+            chown -R vscode:vscode "${dir}"
+        fi
+    done
+}
+
+fix_ownership
 
 echo "Claude Code with sandbox and voice-mode dependencies installed successfully."
