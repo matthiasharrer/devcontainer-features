@@ -1,6 +1,6 @@
 {
   "id": "claude-code",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "name": "Claude Code with Sandbox",
   "description": "Installs Claude Code CLI, sandbox dependencies (bubblewrap, socat, ripgrep), and voice-mode audio support (sox, PulseAudio/PipeWire). Runs privileged and mounts Claude credential/config files and the host PulseAudio socket.",
   "documentationURL": "https://code.claude.com/docs/en/sandboxing",
