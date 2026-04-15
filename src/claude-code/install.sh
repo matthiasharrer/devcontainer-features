@@ -113,10 +113,12 @@ prepare_config_dirs
 install_claude_code
 install_sandbox_runtime
 
-# Fix ownership after all installers have run.
-# install_claude_code and install_sandbox_runtime run as root (with HOME set to
-# the vscode home), so they may create ~/.cache, ~/.local subdirs, etc. owned
-# by root. We correct that here so the container user can write to them.
+# Fix ownership of ~/.local and ~/.cache after all installers have run.
+# install_claude_code and install_sandbox_runtime execute as root with HOME set
+# to the vscode home, so they may create these directories (or subdirs) owned
+# by root. ~/.claude, ~/.claude.json, and ~/.config/claude-code are intentionally
+# excluded: they are bind-mounted from the host at runtime and would be overlaid
+# anyway, so chowning them here is both pointless and potentially misleading.
 fix_ownership() {
     if ! id vscode &>/dev/null; then
         return
@@ -125,9 +127,6 @@ fix_ownership() {
     user_home="$(getent passwd vscode 2>/dev/null | cut -d: -f6 || echo "/home/vscode")"
 
     for dir in \
-        "${user_home}/.claude" \
-        "${user_home}/.claude.json" \
-        "${user_home}/.config/claude-code" \
         "${user_home}/.local" \
         "${user_home}/.cache"; do
         if [ -e "${dir}" ]; then
