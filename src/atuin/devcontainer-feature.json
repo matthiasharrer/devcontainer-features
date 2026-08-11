@@ -1,6 +1,6 @@
 {
   "id": "atuin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Atuin Shell History",
   "description": "Installs Atuin shell history tool and mounts host config and data directories. Enables shell integration for bash and zsh with up-arrow disabled. Sync is disabled (host handles syncing).",
   "options": {
@@ -8,6 +8,11 @@
       "type": "string",
       "default": "latest",
       "description": "Version of Atuin to install ('latest' or a specific version number like '18.4.0')"
+    },
+    "debug": {
+      "type": "boolean",
+      "default": false,
+      "description": "Print every command install.sh runs (set -x), useful for diagnosing an install failure."
     }
   },
   "mounts": [
@@ -26,6 +31,7 @@
     "ATUIN_AUTO_SYNC": "false"
   },
   "installsAfter": [
-    "ghcr.io/devcontainers/features/common-utils"
+    "ghcr.io/devcontainers/features/common-utils",
+    "ghcr.io/matthiasharrer/devcontainer-features/zsh-config"
   ]
 }
