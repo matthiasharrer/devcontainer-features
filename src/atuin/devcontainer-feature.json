@@ -1,8 +1,8 @@
 {
   "id": "atuin",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "name": "Atuin Shell History",
-  "description": "Installs Atuin shell history tool and mounts host config and data directories. Enables shell integration for bash and zsh with up-arrow disabled. Sync is disabled (host handles syncing).",
+  "description": "Installs Atuin shell history tool and mounts host config and data directories. Enables shell integration for bash and zsh with up-arrow disabled. Sync is disabled (host handles syncing). Never starts its own Atuin daemon; uses the host daemon when its socket is in the mounted data directory, otherwise writes history directly.",
   "options": {
     "version": {
       "type": "string",
@@ -28,7 +28,10 @@
     }
   ],
   "containerEnv": {
-    "ATUIN_AUTO_SYNC": "false"
+    "ATUIN_AUTO_SYNC": "false",
+    "ATUIN_DAEMON__AUTOSTART": "false",
+    "ATUIN_DAEMON__SOCKET_PATH": "/home/vscode/.local/share/atuin/atuin.sock",
+    "ATUIN_DAEMON__PIDFILE_PATH": "/tmp/atuin-devcontainer/atuin-daemon.pid"
   },
   "installsAfter": [
     "ghcr.io/devcontainers/features/common-utils",

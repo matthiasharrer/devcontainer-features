@@ -14,7 +14,7 @@ This is a **DevContainer Features** repository. Every subdirectory of `src/` is 
 | `claude-code` | Installs the Claude Code CLI with sandbox dependencies (bubblewrap, socat, ripgrep) and voice-mode audio support (sox, PulseAudio); runs privileged. | `~/.claude` → `/home/vscode/.claude`, `~/.claude.json` → `/home/vscode/.claude.json`, `~/.config/claude-code` → `/home/vscode/.config/claude-code`, `${XDG_RUNTIME_DIR:-/run/user/1000}/pulse` → `/run/user/1000/pulse` |
 | `devcontainer-workspace-color` | Colors VS Code's title bar (optionally status/activity bar) with a deterministic color derived from the host workspace path. | none |
 | `global-gitignore` | Mounts the host's global gitignore and configures it as git's global excludes file. | `~/.gitignore` → `/home/vscode/.gitignore` |
-| `atuin` | Installs Atuin shell history with bash/zsh integration (up-arrow disabled, sync disabled — the host syncs). | `~/.config/atuin` → `/home/vscode/.config/atuin`, `~/.local/share/atuin` → `/home/vscode/.local/share/atuin` |
+| `atuin` | Installs Atuin shell history with bash/zsh integration (up-arrow disabled, sync disabled — the host syncs). Never runs its own daemon; uses the host daemon through a socket in the mounted data dir (see `src/atuin/README.md`). | `~/.config/atuin` → `/home/vscode/.config/atuin`, `~/.local/share/atuin` → `/home/vscode/.local/share/atuin` |
 | `zsh-config` | Installs Oh My Zsh with the zsh-autosuggestions plugin and the Spaceship prompt theme. | none |
 
 `claude-code` and `devcontainer-workspace-color` are not part of `mine`; they stay available as standalone features.

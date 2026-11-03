@@ -137,6 +137,28 @@ prepare_mount_dirs() {
     fi
 }
 
+# Daemon handling (see README.md, "Atuin daemon"). The container never runs
+# a daemon of its own: containerEnv sets ATUIN_DAEMON__AUTOSTART=false, a
+# container-local ATUIN_DAEMON__PIDFILE_PATH (the host daemon's pidfile in the
+# mounted data dir records the host's absolute socket path, which Atuin would
+# otherwise prefer over socket_path and which doesn't exist in here), and
+# ATUIN_DAEMON__SOCKET_PATH pointing into the mounted data dir. If no socket is
+# there at shell start (host daemon off, socket elsewhere such as the default
+# /tmp/atuin-$UID, or a Windows host), daemon use is switched off for this
+# shell so every command writes history directly instead of first failing to
+# reach a daemon. An ATUIN_DAEMON__ENABLED the user set themselves wins.
+append_daemon_guard() {
+    local rc="$1"
+    if grep -qF "ATUIN_DAEMON__ENABLED" "${rc}" 2>/dev/null; then
+        return
+    fi
+    {
+        echo ""
+        echo "# Atuin daemon: use the host's daemon only if its socket is in the mounted data dir"
+        echo 'if [ -z "${ATUIN_DAEMON__ENABLED+x}" ] && [ ! -S "${ATUIN_DAEMON__SOCKET_PATH:-${HOME}/.local/share/atuin/atuin.sock}" ]; then export ATUIN_DAEMON__ENABLED=false; fi'
+    } >> "${rc}"
+}
+
 # Append atuin shell integration to bashrc and zshrc with up-arrow disabled.
 configure_shell_init() {
     local bash_init='eval "$(atuin init bash --disable-up-arrow)"'
@@ -144,6 +166,7 @@ configure_shell_init() {
 
     # Configure bash
     local bashrc="${TARGET_USER_HOME}/.bashrc"
+    append_daemon_guard "${bashrc}"
     if [ -f "${bashrc}" ]; then
         if ! grep -qF "atuin init bash" "${bashrc}"; then
             echo "" >> "${bashrc}"
@@ -157,6 +180,7 @@ configure_shell_init() {
 
     # Configure zsh
     local zshrc="${TARGET_USER_HOME}/.zshrc"
+    append_daemon_guard "${zshrc}"
     if [ -f "${zshrc}" ]; then
         if ! grep -qF "atuin init zsh" "${zshrc}"; then
             echo "" >> "${zshrc}"
