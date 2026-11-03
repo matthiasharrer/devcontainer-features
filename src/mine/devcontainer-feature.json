@@ -1,10 +1,9 @@
 {
   "id": "mine",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "name": "Mine",
-  "description": "Wrapper feature that installs Claude Code with sandbox, devcontainer workspace color, global gitignore configuration, Atuin shell history, and Zsh config (Oh My Zsh with plugins).",
+  "description": "Wrapper feature that installs devcontainer workspace color, global gitignore configuration, Atuin shell history, and Zsh config (Oh My Zsh with plugins).",
   "dependsOn": {
-    "ghcr.io/matthiasharrer/devcontainer-features/claude-code:1": {},
     "ghcr.io/matthiasharrer/devcontainer-features/devcontainer-workspace-color:1": {},
     "ghcr.io/matthiasharrer/devcontainer-features/global-gitignore:1": {},
     "ghcr.io/matthiasharrer/devcontainer-features/atuin:1": {},

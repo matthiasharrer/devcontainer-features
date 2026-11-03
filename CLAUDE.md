@@ -4,13 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **DevContainer Features** repository that provides a single feature: `claude-code`. The feature installs Claude Code CLI and its sandbox dependencies (bubblewrap, socat, ripgrep) into development containers. It is published to GitHub Container Registry (GHCR) via the `devcontainers/action@v1` GitHub Action.
+This is a **DevContainer Features** repository. Every subdirectory of `src/` is one feature, published to GitHub Container Registry (GHCR) as `ghcr.io/matthiasharrer/devcontainer-features/<id>` via the `devcontainers/action@v1` GitHub Action.
+
+### Features
+
+| Feature | What it does | Host bind mounts (host → container) |
+|---|---|---|
+| `mine` | Wrapper feature without its own installation; bundles `devcontainer-workspace-color`, `global-gitignore`, `atuin` and `zsh-config` via `dependsOn`. | none of its own (the bundled features bring theirs) |
+| `claude-code` | Installs the Claude Code CLI with sandbox dependencies (bubblewrap, socat, ripgrep) and voice-mode audio support (sox, PulseAudio); runs privileged. | `~/.claude` → `/home/vscode/.claude`, `~/.claude.json` → `/home/vscode/.claude.json`, `~/.config/claude-code` → `/home/vscode/.config/claude-code`, `${XDG_RUNTIME_DIR:-/run/user/1000}/pulse` → `/run/user/1000/pulse` |
+| `devcontainer-workspace-color` | Colors VS Code's title bar (optionally status/activity bar) with a deterministic color derived from the host workspace path. | none |
+| `global-gitignore` | Mounts the host's global gitignore and configures it as git's global excludes file. | `~/.gitignore` → `/home/vscode/.gitignore` |
+| `atuin` | Installs Atuin shell history with bash/zsh integration (up-arrow disabled, sync disabled — the host syncs). | `~/.config/atuin` → `/home/vscode/.config/atuin`, `~/.local/share/atuin` → `/home/vscode/.local/share/atuin` |
+| `zsh-config` | Installs Oh My Zsh with the zsh-autosuggestions plugin and the Spaceship prompt theme. | none |
+
+`claude-code` is not part of `mine`; it stays available as a standalone feature.
 
 ## Repository Structure
 
-- `src/claude-code/devcontainer-feature.json` — Feature manifest defining metadata, options, mounts, and container environment
-- `src/claude-code/install.sh` — Bash installation script that detects the package manager and installs dependencies
-- `.github/workflows/release.yaml` — Publishes features to GHCR on GitHub Release or manual dispatch
+- `src/<id>/devcontainer-feature.json` — Feature manifest (metadata, version, options, mounts, container environment, `dependsOn`/`installsAfter`)
+- `src/<id>/install.sh` — Installation script run during the container build
+- `.github/workflows/release.yaml` — Publishes all features to GHCR on push to `main` or manual dispatch
 
 ## Development
 
@@ -18,23 +31,25 @@ There is no build step, test suite, or linter. The project consists of shell scr
 
 ### Testing changes locally
 
-Use the [Dev Container CLI](https://github.com/devcontainers/cli) to test the feature:
+Use the [Dev Container CLI](https://github.com/devcontainers/cli) to test a feature, passing its id via `--features <id>`, e.g.:
 
 ```bash
-devcontainer features test --features claude-code --base-image mcr.microsoft.com/devcontainers/base:ubuntu
+devcontainer features test --features atuin --base-image mcr.microsoft.com/devcontainers/base:ubuntu
 ```
 
 ### Publishing
 
-Features are published automatically when a GitHub Release is created. The workflow can also be triggered manually via `workflow_dispatch`. Only the `main` branch is eligible for publishing.
+The release workflow publishes features to GHCR on every push to `main`; it can also be triggered manually via `workflow_dispatch`. Only the `main` branch is eligible for publishing.
 
-> **Important:** Consumers who reference the feature by a version tag (e.g. `:1`) will not pick up changes until the version in `src/claude-code/devcontainer-feature.json` is bumped and a new release is published. Always bump the version when making functional changes so that existing devcontainers can rebuild and get the update.
+> **Important — version bumps:** Consumers reference features by a version tag (e.g. `:1`) and only pick up changes when a new version is published. For every functional change to a feature, bump the `version` in that feature's `devcontainer-feature.json`. If what `mine` bundles changes (features added to or removed from its `dependsOn`), bump the version of `mine` as well.
 
 ## Key Design Decisions
 
+### `claude-code`
+
 - **Privileged mode**: The container runs privileged (`"privileged": true`) because bubblewrap requires it for sandboxing.
-- **Host credential mounts**: Three bind mounts pass `~/.claude`, `~/.claude.json`, and `~/.config/claude-code` from the host into the container at `/home/vscode/`.
-- **Install order**: The feature declares `installsAfter` dependencies on `common-utils` and `node` features.
+- **Host credential mounts**: Bind mounts pass `~/.claude`, `~/.claude.json`, and `~/.config/claude-code` from the host into the container at `/home/vscode/`; the host PulseAudio socket is mounted for voice mode.
+- **Install order**: The feature depends on the `node` feature and declares `installsAfter` on `common-utils` and `node`.
 - **Multi-distro support**: `install.sh` detects apt-get, dnf, yum, or apk and installs packages accordingly.
 - **Version option**: Accepts `"latest"`, `"stable"`, or a specific version number, passed through to the Claude Code installer script.
 - **`CLAUDE_CODE_DISABLE_NONINTERACTIVE=1`**: Set as a container environment variable.
